@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Research — Combined Reports</title>
+<style>
+  :root{
+    --accent:#2E5AAC; --accent-soft:#eaf0fb;
+    --ink:#16181d; --muted:#5b6470; --line:#e2e6ee;
+    --bg:#ffffff; --panel:#f7f9fc; --chip:#eef2fb;
+    --tier:#1f7a54; --tier-bg:#e8f5ee;
+    --p:#1f7a54; --p-bg:#e8f5ee; --d:#9a5b00; --d-bg:#fcf1e2; --b:#5a3aa6; --b-bg:#efeafb;
+    --nav:248px; --tabh:54px;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;color:var(--ink);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+
+  /* ===== top toggle bar ===== */
+  .tabbar{position:sticky;top:0;z-index:50;height:var(--tabh);display:flex;align-items:center;justify-content:center;gap:14px;
+    padding:0 22px;background:rgba(255,255,255,.92);backdrop-filter:saturate(1.8) blur(8px);border-bottom:1px solid var(--line)}
+  .tabbar .logo{position:absolute;left:22px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;line-height:1.18}
+  .tabbar .logo .lt{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+  .tabbar .logo .ls{font-size:10.5px;font-weight:500;color:var(--muted)}
+  .toggle{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px}
+  .toggle button{appearance:none;border:0;background:transparent;cursor:pointer;font:inherit;font-size:13px;font-weight:600;
+    color:var(--muted);padding:7px 14px;border-radius:8px;transition:.15s;white-space:nowrap}
+  .toggle button.active{background:var(--accent);color:#fff}
+  .toggle button:not(.active):hover{color:var(--ink)}
+
+  /* ===== report shell ===== */
+  .report{display:none}
+  .report.active{display:block}
+  .wrap{display:flex;align-items:flex-start;max-width:1180px;margin:0 auto}
+  nav.side{position:sticky;top:var(--tabh);height:calc(100vh - var(--tabh));width:var(--nav);flex:0 0 var(--nav);
+    padding:30px 22px;border-right:1px solid var(--line);background:var(--bg);overflow-y:auto}
+  nav.side .brand{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+  nav.side .sub{font-size:12.5px;color:var(--muted);margin-bottom:22px;line-height:1.45}
+  nav.side ol{list-style:none;margin:0;padding:0}
+  nav.side li{margin:2px 0}
+  nav.side a{display:flex;gap:10px;align-items:baseline;padding:9px 11px;border-radius:8px;color:var(--muted);font-size:14px;font-weight:500;transition:.15s}
+  nav.side a .n{font-variant-numeric:tabular-nums;font-weight:700;color:var(--accent);opacity:.55;font-size:12.5px;min-width:14px}
+  nav.side a:hover{background:var(--panel);color:var(--ink)}
+  nav.side a.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
+  nav.side a.active .n{opacity:1}
+  nav.side .foot{margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted)}
+  main{flex:1;min-width:0;padding:48px 56px 120px;max-width:1000px}
+  header.hero h1{font-size:29px;line-height:1.18;margin:0 0 10px;letter-spacing:-.01em}
+  header.hero p{margin:0;color:var(--muted);font-size:15px;max-width:64ch}
+  .caveat{margin:20px 0 0;padding:12px 16px;background:var(--panel);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;font-size:13.5px;color:#3c4350}
+  section{padding-top:44px;margin-top:10px;scroll-margin-top:calc(var(--tabh) + 16px);border-top:1px solid var(--line)}
+  section:first-of-type{border-top:none}
+  h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 6px}
+  h2 + .lead{font-size:21px;font-weight:650;letter-spacing:-.01em;margin:0 0 18px;line-height:1.3}
+  h3{font-size:15px;margin:26px 0 10px}
+  p{margin:0 0 14px}
+
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .card h4{margin:0 0 6px;font-size:14px}
+  .card p{margin:0;font-size:13.5px;color:#3c4350}
+  .you{background:var(--accent-soft);border:1px solid #d4e0f5;border-radius:12px;padding:20px 22px;margin-top:18px}
+  .you h3{margin:0 0 8px;color:var(--accent)}
+  .you p{margin:0 0 10px;font-size:14.5px}
+  .you p:last-child{margin:0}
+
+  .shape{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 14px;background:var(--bg)}
+  .shape-h{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+  .shape-h .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:0 0 auto}
+  .shape-h h3{margin:0;font-size:15.5px}
+  .shape-h .tier{margin-left:auto;font-size:11.5px;font-weight:600;color:var(--tier);background:var(--tier-bg);padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .shape > p.desc2{font-size:13px;color:var(--muted);margin:2px 0 12px}
+  .accts{display:flex;flex-wrap:wrap;gap:7px}
+  .acct{display:inline-flex;align-items:baseline;gap:6px;background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:5px 10px;font-size:13px}
+  .acct b{font-weight:600;color:var(--ink)}
+  .acct span{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+  ul.ev{list-style:none;margin:6px 0 0;padding:0}
+  ul.ev > li{position:relative;padding:13px 0 13px 26px;border-bottom:1px dashed var(--line)}
+  ul.ev > li:last-child{border-bottom:none}
+  ul.ev > li::before{content:"";position:absolute;left:6px;top:21px;width:7px;height:7px;border-radius:2px;background:var(--accent);transform:rotate(45deg)}
+  ul.ev .claim{font-weight:600;font-size:14.5px;display:block;margin-bottom:3px}
+  ul.ev .data{font-size:13px;color:#3c4350}
+  ul.ev .data .tag2{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);border-radius:5px;padding:1px 6px;margin-right:7px;vertical-align:1px}
+
+  .funnel-frame{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--bg);overflow-x:auto}
+  .funnel-frame svg{min-width:760px;width:100%;height:auto;display:block}
+  .funnel-note{font-size:12.5px;color:var(--muted);margin:12px 2px 0}
+
+  /* ranking (report 2) */
+  .rank{display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--line)}
+  .rank:last-child{border-bottom:none}
+  .pos{flex:0 0 30px;font-size:20px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1.2;padding-top:2px}
+  .rmeta{flex:1;min-width:0}
+  .firm{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+  .firm .name{font-size:16px;font-weight:700}
+  .firm .handle{font-size:13px;color:var(--muted)}
+  .firm .hq{font-size:11.5px;color:var(--muted);margin-left:auto}
+  .firm .hq::before{content:"📍 "}
+  .desc{font-size:13.5px;color:#343b46;margin:5px 0 8px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px}
+  .tag{font-size:11px;font-weight:600;border-radius:6px;padding:2px 8px}
+  .t-p{color:var(--p);background:var(--p-bg)} .t-d{color:var(--d);background:var(--d-bg)} .t-b{color:var(--b);background:var(--b-bg)}
+  .fol{flex:0 0 92px;text-align:right}
+  .fol .num{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+  .fol .lbl{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .bar{height:5px;border-radius:3px;background:var(--accent);margin-top:6px;opacity:.85}
+  .disc-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:0 0 14px}
+  table.excl{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+  table.excl th,table.excl td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.excl th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+
+  /* ===== report 3: models ===== */
+  .models{display:flex;flex-direction:column;gap:14px;margin:14px 0}
+  .model{border:1px solid var(--line);border-radius:14px;padding:18px 20px;background:var(--bg)}
+  .model-h{display:flex;align-items:center;gap:12px;margin-bottom:2px}
+  .model-h .badge{flex:0 0 30px;height:30px;border-radius:9px;background:var(--accent);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .model-h h3{margin:0;font-size:16.5px}
+  .model-h .effort{margin-left:auto;font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap}
+  .model .one{font-size:13.5px;color:#343b46;margin:6px 0 12px}
+  .tag-row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0}
+  .pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
+  .pc h6{margin:0 0 5px;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+  .pc .pro h6{color:var(--p)} .pc .con h6{color:#b4232a}
+  .pc ul{margin:0;padding-left:16px;font-size:12.5px;color:#3c4350}
+  .pc ul li{margin:3px 0}
+  .bestwhen{margin-top:12px;font-size:12.5px;background:var(--accent-soft);border-radius:8px;padding:9px 13px;color:#2a3f6b}
+  .bestwhen b{color:var(--accent)}
+  .cases{margin-top:12px;padding-top:11px;border-top:1px dashed var(--line);font-size:12.5px;color:var(--muted);line-height:1.7}
+  .cases b{color:var(--ink)}
+  .cases a{font-weight:600}
+
+  .svc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  .scard{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--panel)}
+  .scard .k{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);font-weight:700}
+  .scard h4{margin:3px 0 4px;font-size:15px}
+  .scard p{margin:0;font-size:12.5px;color:#3c4350}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .chip2{font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:4px 9px}
+
+  .fblock{border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 16px;background:var(--bg)}
+  .fblock .ft{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .fblock .ft .badge{flex:0 0 26px;height:26px;border-radius:8px;background:var(--accent);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px}
+  .fblock .ft h3{margin:0;font-size:15px}
+  .fstrip{display:flex;align-items:stretch;flex-wrap:nowrap;overflow-x:auto;gap:0;padding-bottom:2px}
+  .fstage{flex:1 0 0;min-width:132px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 12px}
+  .fstage.land{background:#eef7f1;border-color:#cfe6d8}
+  .fstage.expand{background:var(--accent-soft);border-color:#d4e0f5}
+  .fstage h5{margin:0 0 4px;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--accent)}
+  .fstage.land h5{color:var(--p)}
+  .fstage p{margin:0;font-size:12px;color:#343b46;line-height:1.45}
+  .farrow{flex:0 0 20px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700;font-size:15px}
+  .lever{margin-top:11px;font-size:12.5px;color:#3c4350}
+  .lever b{color:var(--accent)}
+
+  @media(max-width:860px){
+    :root{--rnav:44px}
+    .wrap{flex-direction:column}
+    nav.side{position:sticky;top:var(--tabh);height:auto;width:100%;flex:none;padding:8px 14px;border-right:none;border-bottom:1px solid var(--line);background:rgba(255,255,255,.94);backdrop-filter:blur(8px);z-index:20}
+    nav.side .brand,nav.side .sub,nav.side .foot{display:none}
+    nav.side ol{display:flex;gap:6px;overflow-x:auto}
+    nav.side a{white-space:nowrap;padding:7px 12px}
+    main{padding:28px 18px 90px}
+    .cards{grid-template-columns:1fr}
+    header.hero h1{font-size:23px}
+    .firm .hq{margin-left:0;flex-basis:100%}
+    .tabbar .logo{display:none}
+    .toggle{margin-left:0;width:100%}
+    .toggle button{flex:1;font-size:11.5px;padding:7px 8px}
+    .pc,.svc{grid-template-columns:1fr}
+    .fstrip{flex-direction:column}
+    .farrow{transform:rotate(90deg);padding:3px 0}
+  }
+</style>
+</head>
+<body>
+
+<div class="tabbar">
+  <div class="logo"><span class="lt">Consultancy Research</span><span class="ls">Based on George's X data</span></div>
+  <div class="toggle" role="tablist">
+    <button id="t1" class="active" onclick="showReport(1)" role="tab">Design</button>
+    <button id="t2" onclick="showReport(2)" role="tab">Design + Product</button>
+    <button id="t3" onclick="showReport(3)" role="tab">Biz models</button>
+  </div>
+</div>
+
+<!-- ============================ REPORT 1 ============================ -->
+<div class="report active" id="report1" data-report>
+  <div class="wrap">
+    <nav class="side">
+      <div class="brand">Report ①</div>
+      <div class="sub">Design freelancers &amp; studios from @georgechang1987’s following · Jun 2026</div>
+      <ol>
+        <li><a href="#insights" data-t="insights"><span class="n">01</span> Key insights</a></li>
+        <li><a href="#shortlist" data-t="shortlist"><span class="n">02</span> The shortlist</a></li>
+        <li><a href="#content" data-t="content"><span class="n">03</span> Content strategy</a></li>
+        <li><a href="#services" data-t="services"><span class="n">04</span> Services</a></li>
+        <li><a href="#funnel" data-t="funnel"><span class="n">05</span> Funnel map</a></li>
+      </ol>
+      <div class="foot">15 accounts · followers 172K → 1.8K. Revenue figures are modeled estimates unless marked Stated.</div>
+    </nav>
+    <main>
+      <header class="hero">
+        <h1>Design consultancy on X — what the field looks like</h1>
+        <p>15 design freelancers and studios pulled from your Following list, analyzed across who they are, their X strategy, services, and modeled revenue.</p>
+        <p class="caveat"><b>On revenue:</b> none publish full financials, so every figure is a <b>modeled estimate</b> except two who stated their own — @basit_designs (~$25K MRR client work) and @danmall (coaching past $100K in 8 months).</p>
+      </header>
+
+      <section id="insights">
+        <h2>01 — Key insights</h2>
+        <div class="lead">Overview</div>
+        <div class="cards">
+          <div class="card"><h4>Reach varies wildly</h4><p>The 15 span 172K followers (Meng To) down to 1.8K (Ata) — yet the small accounts compete on engagement, not size.</p></div>
+          <div class="card"><h4>Engagement &gt; follower count</h4><p>@hunterthompson (3.3K) and @theatashka (1.8K) pull 200K+ and 39K views per post — far above what their counts predict.</p></div>
+          <div class="card"><h4>Proof-of-work wins</h4><p>The best posts are screen recordings and carousels of real UI, motion and before/afters — not advice threads.</p></div>
+          <div class="card"><h4>Hybrid is the high tier</h4><p>Everyone clearing ~$300K+ sells a by-product of client work — assets, courses, or a tool — on top of services.</p></div>
+        </div>
+        <div class="you">
+          <h3>What this suggests for you</h3>
+          <p>As a UIUX/product designer, the best risk-reward isn’t pure freelance <i>or</i> pure course-selling — it’s the <b>studio-plus-productized hybrid</b>. Client work funds the lights; a productized asset or course compounds the audience. @basit_designs and @marina_uiux are the cleanest models to study.</p>
+          <p>The on-ramp is consistent, visual, build-in-public posting at <b>daily cadence</b>, anchored to <b>one repeatable niche</b> (e.g., Framer/Webflow marketing sites for a specific vertical) rather than “I design everything.”</p>
+        </div>
+      </section>
+
+      <section id="shortlist">
+        <h2>02 — The shortlist</h2>
+        <div class="lead">Four business shapes the 15 fall into</div>
+        <div class="shape">
+          <div class="shape-h"><span class="dot"></span><h3>Education / productized brands</h3><span class="tier">~$150K–2M / yr</span></div>
+          <p class="desc2">Audience-driven courses, cohorts, coaching, talent networks. Highest ceilings.</p>
+          <div class="accts">
+            <span class="acct"><b>@MengTo</b><span>172.4K</span></span><span class="acct"><b>@viktoroddy</b><span>58.1K</span></span>
+            <span class="acct"><b>@danmall</b><span>47.7K</span></span><span class="acct"><b>@designertom</b><span>18.5K</span></span>
+          </div>
+        </div>
+        <div class="shape">
+          <div class="shape-h"><span class="dot"></span><h3>Studio + productized hybrid</h3><span class="tier">~$200K–700K / yr</span></div>
+          <p class="desc2">Run client work <i>and</i> sell assets/courses off the same audience. Most resilient — and the closest template for you.</p>
+          <div class="accts">
+            <span class="acct"><b>@marina_uiux</b><span>54.5K</span></span><span class="acct"><b>@basit_designs</b><span>22.6K</span></span><span class="acct"><b>@aliszu</b><span>23.2K</span></span>
+          </div>
+        </div>
+        <div class="shape">
+          <div class="shape-h"><span class="dot"></span><h3>Pure studios / freelance</h3><span class="tier">~$80K–600K / yr</span></div>
+          <p class="desc2">Revenue tracks project fees and team size. Webflow/Framer “expert partner” status is a recurring credibility hook.</p>
+          <div class="accts">
+            <span class="acct"><b>@marcelkargul</b><span>49.4K</span></span><span class="acct"><b>@hunterthompson</b><span>3.3K</span></span>
+            <span class="acct"><b>@studiobakers</b><span>4.7K</span></span><span class="acct"><b>@kabarza_</b><span>4.6K</span></span><span class="acct"><b>@theatashka</b><span>1.8K</span></span>
+          </div>
+        </div>
+        <div class="shape">
+          <div class="shape-h"><span class="dot"></span><h3>Asset / tool shops</h3><span class="tier">~$100K–400K / yr</span></div>
+          <p class="desc2">Recurring royalties or subscriptions from packaged design — UI kits, a SaaS tool, 3D.</p>
+          <div class="accts">
+            <span class="acct"><b>@tranmautritam</b><span>30.7K</span></span><span class="acct"><b>@bbssppllvv</b><span>13.1K</span></span><span class="acct"><b>@derrkdotcom</b><span>3.7K</span></span>
+          </div>
+        </div>
+      </section>
+
+      <section id="content">
+        <h2>03 — Content strategy pattern</h2>
+        <div class="lead">What actually works on the timeline</div>
+        <ul class="ev">
+          <li><span class="claim">The currency is visual proof-of-work, not advice</span><span class="data"><span class="tag2">Evidence</span>@marcelkargul, @hunterthompson and @derrkdotcom lean almost entirely on screen-recorded client case studies and motion reels — their pinned posts are videos of real builds.</span></li>
+          <li><span class="claim">Cadence is high — daily or near-daily</span><span class="data"><span class="tag2">Evidence</span>Consistency over years: @MengTo 28.3K posts, @danmall 27.6K, @marcelkargul 26.2K. The volume, not a one-off viral hit, builds the audience.</span></li>
+          <li><span class="claim">Engagement-per-follower is the real signal</span><span class="data"><span class="tag2">Evidence</span>@hunterthompson (3.3K followers) hit 2.4K likes / 215K views on his pinned post; @theatashka (1.8K) hit 1.1K likes / 39K views.</span></li>
+          <li><span class="claim">Almost everyone threads an “AI design” angle</span><span class="data"><span class="tag2">Evidence</span>@viktoroddy (Figma motion + AI sites), @MengTo (prompting landing pages with Gemini), @bbssppllvv (“make AI design not suck”).</span></li>
+          <li><span class="claim">The leverage move: productize a by-product of the work</span><span class="data"><span class="tag2">Evidence</span>Gradients → @basit_designs (Grainient, 100K visits/mo); UI kits → @tranmautritam (Envato Power Elite); reference library → @bbssppllvv (Refero, 300K+ users); courses → @marina_uiux (10k+ students).</span></li>
+        </ul>
+      </section>
+
+      <section id="services">
+        <h2>04 — Services offered</h2>
+        <div class="lead">What they actually sell</div>
+        <ul class="ev">
+          <li><span class="claim">Marketing / landing sites — the core offer</span><span class="data"><span class="tag2">Evidence</span>Usually Webflow or Framer. @hunterthompson is a Webflow Expert Partner; @basit_designs a Framer Partner; @kabarza_ builds in Webflow; @theatashka builds for fintech/SaaS.</span></li>
+          <li><span class="claim">Product / UX design for startups</span><span class="data"><span class="tag2">Evidence</span>@marina_uiux runs “full-cycle design for startups”; @aliszu an app-focused product studio; @usernametiago freelances for Sequoia, Intercom, Ramp, ElevenLabs.</span></li>
+          <li><span class="claim">The shift is “design + build,” not branding-only</span><span class="data"><span class="tag2">Evidence</span>@marcelkargul markets as a “design <i>and dev</i> partner”; @theatashka “design and build”; @aliszu pairs studio work with shipped tools.</span></li>
+          <li><span class="claim">Design systems as a specialty hook</span><span class="data"><span class="tag2">Evidence</span>@marina_uiux sells a “UI Design &amp; Systems” course ($179) and systems consulting alongside the studio.</span></li>
+          <li><span class="claim">Motion &amp; 3D are rising premium add-ons</span><span class="data"><span class="tag2">Evidence</span>@derrkdotcom does 3D/Blender animation for brands (Timberland PRO); @viktoroddy and @marcelkargul use motion as their differentiator.</span></li>
+          <li><span class="claim">Productized add-ons sit on top of services</span><span class="data"><span class="tag2">Evidence</span>Asset shops (@tranmautritam, @basit_designs), a design SaaS (@bbssppllvv Refero), and education (@MengTo, @danmall) extend the core service into recurring income.</span></li>
+        </ul>
+      </section>
+
+      <section id="funnel">
+        <h2>05 — The funnel map</h2>
+        <div class="lead">From X attention to paid service</div>
+        <div class="funnel-frame">
+          <svg viewBox="0 0 1060 612" xmlns="http://www.w3.org/2000/svg" role="img">
+            <title>Design creator funnel from X to revenue</title>
+            <desc>Flow from daily X content, to a link-in-bio lead magnet, to their website, fanning into four monetization lanes.</desc>
+            <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/></marker></defs>
+            <rect x="30" y="214" width="220" height="170" rx="12" fill="#fff" stroke="var(--accent)" stroke-width="2"/>
+            <rect x="30" y="214" width="220" height="30" rx="12" fill="var(--accent)"/><rect x="30" y="226" width="220" height="18" fill="var(--accent)"/>
+            <text x="46" y="234" font-size="13" font-weight="700" fill="#fff">1 · ON X  (daily)</text>
+            <text x="46" y="270" font-size="12.5" fill="var(--ink)">Visual proof-of-work:</text>
+            <text x="46" y="293" font-size="12" fill="var(--muted)">• Video case studies</text>
+            <text x="46" y="313" font-size="12" fill="var(--muted)">• UI carousels · AI-design</text>
+            <text x="46" y="333" font-size="12" fill="var(--muted)">• Build-in-public</text>
+            <text x="46" y="365" font-size="11.5" font-style="italic" fill="var(--accent)">Engagement &gt; follower count</text>
+            <line x1="250" y1="299" x2="292" y2="299" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/>
+            <rect x="296" y="214" width="206" height="170" rx="12" fill="#fff" stroke="#c8cfdd" stroke-width="1.5"/>
+            <text x="312" y="240" font-size="13" font-weight="700" fill="var(--ink)">2 · LINK IN BIO</text>
+            <text x="312" y="266" font-size="12" fill="var(--muted)">The hook / lead magnet:</text>
+            <text x="312" y="291" font-size="12" fill="var(--muted)">• Free template / asset</text>
+            <text x="312" y="311" font-size="12" fill="var(--muted)">• Free tool tier</text>
+            <text x="312" y="331" font-size="12" fill="var(--muted)">• Newsletter / “DM keyword”</text>
+            <text x="312" y="363" font-size="11.5" font-style="italic" fill="var(--muted)">Trades attention for contact</text>
+            <line x1="502" y1="299" x2="544" y2="299" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/>
+            <rect x="548" y="244" width="150" height="110" rx="12" fill="var(--accent-soft)" stroke="#c8cfdd" stroke-width="1.5"/>
+            <text x="566" y="284" font-size="13" font-weight="700" fill="var(--ink)">3 · THEIR SITE</text>
+            <text x="566" y="308" font-size="12" fill="var(--muted)">Studio / personal</text>
+            <text x="566" y="326" font-size="12" fill="var(--muted)">or product landing</text>
+            <path d="M698 299 C 740 299, 748 116, 786 116" fill="none" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)"/>
+            <path d="M698 299 C 742 299, 750 232, 786 232" fill="none" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)"/>
+            <path d="M698 299 C 742 299, 750 366, 786 366" fill="none" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)"/>
+            <path d="M698 299 C 740 299, 748 482, 786 482" fill="none" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)"/>
+            <rect x="790" y="78" width="248" height="76" rx="10" fill="#fff" stroke="#cdd4e2" stroke-width="1.5"/><rect x="790" y="78" width="5" height="76" rx="2" fill="var(--accent)"/>
+            <text x="806" y="100" font-size="13" font-weight="700" fill="var(--ink)">Productized assets  <tspan fill="var(--accent)">~$150–400K</tspan></text>
+            <text x="806" y="119" font-size="11.5" fill="var(--muted)">UI kits · gradients · prompts</text>
+            <text x="806" y="141" font-size="11" fill="var(--ink)">@tranmautritam · @basit_designs · @viktoroddy</text>
+            <rect x="790" y="194" width="248" height="76" rx="10" fill="#fff" stroke="#cdd4e2" stroke-width="1.5"/><rect x="790" y="194" width="5" height="76" rx="2" fill="var(--accent)"/>
+            <text x="806" y="216" font-size="13" font-weight="700" fill="var(--ink)">Education &amp; coaching  <tspan fill="var(--accent)">~$150K–2M</tspan></text>
+            <text x="806" y="235" font-size="11.5" fill="var(--muted)">courses · cohorts · talent network</text>
+            <text x="806" y="257" font-size="11" fill="var(--ink)">@MengTo · @marina_uiux · @danmall · @designertom</text>
+            <rect x="790" y="328" width="248" height="76" rx="10" fill="#fff" stroke="#cdd4e2" stroke-width="1.5"/><rect x="790" y="328" width="5" height="76" rx="2" fill="var(--accent)"/>
+            <text x="806" y="350" font-size="13" font-weight="700" fill="var(--ink)">Design SaaS  <tspan fill="var(--accent)">~$100–400K</tspan></text>
+            <text x="806" y="369" font-size="11.5" fill="var(--muted)">subscription tool (recurring)</text>
+            <text x="806" y="391" font-size="11" fill="var(--ink)">@bbssppllvv — Refero</text>
+            <rect x="790" y="444" width="248" height="80" rx="10" fill="#fff" stroke="#cdd4e2" stroke-width="1.5"/><rect x="790" y="444" width="5" height="80" rx="2" fill="var(--accent)"/>
+            <text x="806" y="466" font-size="13" font-weight="700" fill="var(--ink)">Studio &amp; freelance  <tspan fill="var(--accent)">~$80–600K</tspan></text>
+            <text x="806" y="485" font-size="11.5" fill="var(--muted)">retainers · client projects</text>
+            <text x="806" y="503" font-size="11" fill="var(--ink)">@marcelkargul · @hunterthompson · @aliszu</text>
+            <text x="806" y="518" font-size="11" fill="var(--ink)">@kabarza_ · @studiobakers · @theatashka · @derrkdotcom</text>
+            <rect x="30" y="556" width="1008" height="40" rx="10" fill="var(--accent-soft)"/>
+            <text x="50" y="581" font-size="12.5" fill="var(--ink)"><tspan font-weight="700">The winning move:</tspan> run two lanes at once — studio/freelance pays the bills now, a productized asset or course compounds off the same audience (see @basit_designs, @marina_uiux).</text>
+          </svg>
+        </div>
+        <p class="funnel-note">The front of the funnel is near-identical for everyone; what separates the income tiers is which lane(s) they exit into.</p>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- ============================ REPORT 2 ============================ -->
+<div class="report" id="report2" data-report>
+  <div class="wrap">
+    <nav class="side">
+      <div class="brand">Report ②</div>
+      <div class="sub">Consultancies covering both product &amp; design · ranked by X reach · Jun 2026</div>
+      <ol>
+        <li><a href="#overview" data-t="overview"><span class="n">01</span> Overview</a></li>
+        <li><a href="#ranking" data-t="ranking"><span class="n">02</span> Top 15 ranking</a></li>
+        <li><a href="#exclusions" data-t="exclusions"><span class="n">03</span> Exclusions &amp; caveats</a></li>
+      </ol>
+      <div class="foot">Ranked strictly by X follower count, as requested. Followers read live from each profile, Jun 2026.</div>
+    </nav>
+    <main>
+      <header class="hero">
+        <h1>Consultancies covering both product &amp; design</h1>
+        <p>You first asked whether anyone in your Following list offers a product-management service. They don’t — so this is the fallback: firms that genuinely span <b>product</b> (strategy, management, discovery) <b>and design</b>, ranked by X reach.</p>
+        <p class="caveat"><b>Why this list looks the way it does:</b> ranking by X followers is verifiable, but rewards legacy brands (frog, IDEO) and penalizes elite product studios that barely use X (Work&nbsp;&amp;&nbsp;Co, Clay) — see Exclusions.</p>
+      </header>
+
+      <section id="overview">
+        <h2>01 — Overview</h2>
+        <div class="lead">What stands out</div>
+        <p>You first asked whether anyone in your Following list offers a product-management service. After re-scanning all 287 follows, the answer is effectively no — the list is almost entirely design; the only genuine PM provider is <b>@aakashgupta</b>, with <b>@jakek</b> (Design Sprint) adjacent. So this report is the fallback: I screened ~20 firms that genuinely span <b>product and design</b> and ranked the 15 with the most X followers (your chosen metric), read live from each profile.</p>
+        <div class="cards">
+          <div class="card"><h4>X reach ≠ quality</h4><p>The top is legacy brand strength — frog (452K) and IDEO (322.5K) built audiences over 15+ years. Some of the sharpest pure product studios sit far lower, or off-list.</p></div>
+          <div class="card"><h4>Most are tri-disciplinary</h4><p>11 of 15 explicitly pair product + design + engineering. The market has consolidated around end-to-end partners, not design-only shops.</p></div>
+          <div class="card"><h4>Networks top, indies craft</h4><p>Ranks 1–5 are network-owned / enterprise (Capgemini, WPP). Ranks 7–15 are independents competing on craft and named clients.</p></div>
+          <div class="card"><h4>“Product + design” is default</h4><p>Bios now lead with “products and experiences,” not “a UX agency.” Pure-design positioning has largely disappeared at this tier.</p></div>
+          <div class="card"><h4>X is a fading channel</h4><p>thoughtbot is openly leaving X for Bluesky; many post rarely. For B2B consultancies, website/SEO and referrals drive far more business.</p></div>
+        </div>
+        <div class="you">
+          <h3>How to read this ranking</h3>
+          <p>Ranked strictly by X followers, as you chose — verifiable, but it rewards legacy brands and penalizes elite studios that barely use X (Work&nbsp;&amp;&nbsp;Co, Clay). Counts were read live from each firm’s profile in June 2026; discipline tags come from each firm’s own bio. See <b>Exclusions</b> for strong firms this metric misses.</p>
+        </div>
+      </section>
+
+      <section id="ranking">
+        <h2>02 — Top 15 ranking</h2>
+        <div class="lead">Ranked by X followers</div>
+        <div class="disc-legend">
+          <span><b style="color:var(--p)">●</b> Product (strategy / discovery / mgmt)</span>
+          <span><b style="color:var(--d)">●</b> Design (UX / UI / brand)</span>
+          <span><b style="color:var(--b)">●</b> Build (engineering / dev)</span>
+        </div>
+        <div class="rank"><div class="pos">1</div><div class="rmeta"><div class="firm"><span class="name">frog</span><span class="handle">@frogdesign</span><span class="hq">Global · Capgemini Invent</span></div><div class="desc">Founding father of design consulting (est. 1969). Product strategy, service design, UX/UI and engineering for enterprises.</div><div class="tags"><span class="tag t-p">Product</span><span class="tag t-d">Design</span><span class="tag t-b">Build</span></div></div><div class="fol"><div class="num">452K</div><div class="lbl">followers</div><div class="bar" style="width:100%"></div></div></div>
+        <div class="rank"><div class="pos">2</div><div class="rmeta"><div class="firm"><span class="name">IDEO</span><span class="handle">@ideo</span><span class="hq">San Francisco, CA</span></div><div class="desc">Popularized design thinking. Design research, product &amp; service strategy, UX, and innovation consulting.</div><div class="tags"><span class="tag t-p">Product</span><span class="tag t-d">Design</span></div></div><div class="fol"><div class="num">322.5K</div><div class="lbl">followers</div><div class="bar" style="width:71%"></div></div></div>
+        <div class="rank"><div class="pos">3</div><div class="rmeta"><div class="firm"><span class="name">R/GA</span><span class="handle">@RGA</span><span class="hq">New York, NY</span></div><div class="desc">Independent creative-innovation company spanning product, brand, marketing and venture-studio work.</div><div class="tags"><span class="tag t-p">Product</span><span class="tag t-d">Design</span><span class="tag t-b">Build</span></div></div><div class="fol"><div class="num">184K</div><div class="lbl">followers</div><div class="bar" style="width:41%"></div></div></div>
+        <div class="rank"><div class="pos">4</div><div class="rmeta"><div class="firm"><span class="name">AKQA</span><span class="handle">@AKQA</span><span class="hq">Global · WPP</span></div><div class="desc">“The imaginative application of art and science.” Digital product &amp; experience design, engineering and brand at scale.</div><div class="tags"><span class="tag t-p">Product</span><span class="tag t-d">Design</span><span class="tag t-b">Build</span></div></div><div class="fol"><div class="num">88.3K</div><div class="lbl">followers</div><div class="bar" style="width:20%"></div></div></div>
+        <div class="rank"><div class="pos">5</div><div class="rmeta"><div class="firm"><span class="name">Huge</span><span class="handle">@hugeinc</span><span class="hq">Brooklyn, NY</span></div><div class="desc">“A design and technology company creating products and experiences.” Product strategy, UX and data.</div><div class="tags"><span class="tag t-p">Product</span><span class="tag t-d">Design</span><span class="tag t-b">Build</span></div></div><div class="fol"><div class="num">59.8K</div><div class="lbl">followers</div><div class="bar" style="width:13%"></div></div></div>
+        <div class="rank"><div class="pos">6</div><div class="rmeta"><div class="firm"><span class="name">thoughtbot</span><span class="handle">@thoughtbot</span><span class="hq">Remote · US/EU</span></div><div class="desc">“Expert partner for product design and development.” Discovery/validation sprints, design, engineering. <i>Winding down X for Bluesky.</i></div><div class="tags"><span class="tag t-p">Product</span><span class="tag t-d">Design</span><span class="tag t-b">Build</span></div></div><div class="fol"><div class="num">40.3K</div><div class="lbl">followers</div><div class="bar" style="width:9%"></div></div></div>
+        <div class="rank"><div class="pos">7</div><div class="rmeta"><div class="firm"><span class="name">Ramotion</span><span class="handle">@ramotion</span><span class="hq">San Francisco, CA</span></div><div class="desc">“Design partner for growing brands &amp; products at inflection points.” Branding + product UI/UX + dev. Clients: Stripe, Okta, Turo.</div><div class="tags"><span class="tag t-p">Product</span><span class="tag t-d">Design</span><span class="tag t-b">Build</span></div></div><div class="fol"><div class="num">34.2K</div><div class="lbl">followers</div><div class="bar" style="width:7.6%"></div></div></div>
+        <div class="rank"><div class="pos">8</div><div class="rmeta"><div class="firm"><span class="name">MetaLab</span><span class="handle">@metalab</span><span class="hq">Remote · Victoria, BC</span></div><div class="desc">Elite product design agency — “interfaces with companies like Google, Slack, Amazon, Uber.” Product &amp; brand design.</div><div class="tags"><span class="tag t-p">Product</span><span class="tag t-d">Design</span></div></div><div class="fol"><div class="num">33K</div><div class="lbl">followers</div><div class="bar" style="width:7.3%"></div></div></div>
+        <div class="rank"><div class="pos">9</div><div class="rmeta"><div class="firm"><span class="name">Designit</span><span class="handle">@Designit</span><span class="hq">Global · a Wipro company</span></div><div class="desc">Strategic design house: product, service and experience design backed by strategy and research, at enterprise scale.</div><div class="tags"><span class="tag t-p">Product</span><span class="tag t-d">Design</span></div></div><div class="fol"><div class="num">27.2K</div><div class="lbl">followers</div><div class="bar" style="width:6%"></div></div></div>
+        <div class="rank"><div class="pos">10</div><div class="rmeta"><div class="firm"><span class="name">ustwo</span><span class="handle">@ustwo</span><span class="hq">London / NY / Malmö / Tokyo / Lisbon</span></div><div class="desc">Employee-owned, B-Corp digital product studio. Product strategy, design and dev (also Monument Valley).</div><div class="tags"><span class="tag t-p">Product</span><span class="tag t-d">Design</span><span class="tag t-b">Build</span></div></div><div class="fol"><div class="num">23.5K</div><div class="lbl">followers</div><div class="bar" style="width:5.2%"></div></div></div>
+        <div class="rank"><div class="pos">11</div><div class="rmeta"><div class="firm"><span class="name">Smart Design</span><span class="handle">@SmartDesign</span><span class="hq">New York, NY</span></div><div class="desc">“Strategic design company that helps people live better and work smarter.” Strategy/research + industrial &amp; digital product + UX.</div><div class="tags"><span class="tag t-p">Product</span><span class="tag t-d">Design</span></div></div><div class="fol"><div class="num">17.1K</div><div class="lbl">followers</div><div class="bar" style="width:3.8%"></div></div></div>
+        <div class="rank"><div class="pos">12</div><div class="rmeta"><div class="firm"><span class="name">Instrument</span><span class="handle">@instrument</span><span class="hq">Portland, OR</span></div><div class="desc">“Multidisciplinary creative company that redefines brands and experiences.” Brand + digital product + experience design.</div><div class="tags"><span class="tag t-p">Product</span><span class="tag t-d">Design</span></div></div><div class="fol"><div class="num">14.2K</div><div class="lbl">followers</div><div class="bar" style="width:3.1%"></div></div></div>
+        <div class="rank"><div class="pos">13</div><div class="rmeta"><div class="firm"><span class="name">Cuberto</span><span class="handle">@cuberto</span><span class="hq">United States</span></div><div class="desc">“We design &amp; develop mobile apps and websites.” High-craft, motion-rich product design + development studio.</div><div class="tags"><span class="tag t-d">Design</span><span class="tag t-b">Build</span></div></div><div class="fol"><div class="num">7.7K</div><div class="lbl">followers</div><div class="bar" style="width:1.7%"></div></div></div>
+        <div class="rank"><div class="pos">14</div><div class="rmeta"><div class="firm"><span class="name">Netguru</span><span class="handle">@netguru</span><span class="hq">Global · Poland</span></div><div class="desc">“Powering digital commerce with tech &amp; design solutions” — web/mobile dev, product design and ML.</div><div class="tags"><span class="tag t-p">Product</span><span class="tag t-d">Design</span><span class="tag t-b">Build</span></div></div><div class="fol"><div class="num">5.2K</div><div class="lbl">followers</div><div class="bar" style="width:1.2%"></div></div></div>
+        <div class="rank"><div class="pos">15</div><div class="rmeta"><div class="firm"><span class="name">Big Human</span><span class="handle">@BigHuman</span><span class="hq">New York, NY</span></div><div class="desc">“Tech, design, and growth with less agency, more partner.” Product strategy, design and build for startups and brands.</div><div class="tags"><span class="tag t-p">Product</span><span class="tag t-d">Design</span><span class="tag t-b">Build</span></div></div><div class="fol"><div class="num">4.9K</div><div class="lbl">followers</div><div class="bar" style="width:1.1%"></div></div></div>
+      </section>
+
+      <section id="exclusions">
+        <h2>03 — Exclusions &amp; caveats</h2>
+        <div class="lead">Strong firms the X-follower metric misses</div>
+        <p>Because you ranked by X reach, several highly-regarded product+design consultancies fall out despite large <i>website</i> traffic and client rosters. By web traffic or blended prominence these would re-enter near the top:</p>
+        <table class="excl">
+          <tr><th>Firm</th><th>Why it’s notable</th><th>Why it’s not in the 15</th></tr>
+          <tr><td><b>Work &amp; Co</b></td><td>Top-tier product design &amp; build (now Accenture Song); Apple, Google, Mailchimp.</td><td>Minimal/changing X presence.</td></tr>
+          <tr><td><b>Clay</b> (clay.global)</td><td>Elite SF product &amp; brand studio; very high web traffic and award profile.</td><td>Little active X following.</td></tr>
+          <tr><td><b>Pentagram</b></td><td>World’s largest independent design consultancy; huge reach.</td><td>Design/brand-led — not a product (strategy/PM) consultancy.</td></tr>
+          <tr><td><b>Fantasy</b></td><td>Renowned product design firm (Accenture-owned).</td><td>X account currently suspended.</td></tr>
+          <tr><td><b>Significa · Superside</b></td><td>Significa = product+eng studio; Superside = productized design subscription.</td><td>No verifiable main-brand X account / handle taken by others.</td></tr>
+        </table>
+        <p style="margin-top:16px;font-size:13px;color:var(--muted)">Method notes: follower counts read live from each firm’s X profile, June 2026, shown as displayed. Discipline tags derive from each firm’s own bio. “Product” = product strategy/discovery/management capability — distinct from product <i>design</i>. This answers the fallback brief; it is not a quality ranking or endorsement.</p>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- ============================ REPORT 3 ============================ -->
+<div class="report" id="report3" data-report>
+  <div class="wrap">
+    <nav class="side">
+      <div class="brand">Report ③</div>
+      <div class="sub">Three ways you could structure the studio — with a funnel for each · strategy options</div>
+      <ol>
+        <li><a href="#models" data-t="models"><span class="n">01</span> The three models</a></li>
+        <li><a href="#focus" data-t="focus"><span class="n">02</span> Service focus</a></li>
+        <li><a href="#funnels" data-t="funnels"><span class="n">03</span> Funnel per model</a></li>
+        <li><a href="#choose" data-t="choose"><span class="n">04</span> How to choose</a></li>
+      </ol>
+      <div class="foot">Structural options &amp; go-to-market funnels, grounded in Reports ① and ②. Strategy guidance, not financial advice.</div>
+    </nav>
+    <main>
+      <header class="hero">
+        <h1>Three ways to build the studio</h1>
+        <p>Structural options for a product + design consultancy, each with its own client-acquisition funnel. Built on the field research: the market is shifting to “design + build,” and the durable players run a <b>land-and-expand</b> motion.</p>
+        <p class="caveat"><b>How to use this:</b> pick the model that matches your talent today, then read its funnel as the go-to-market plan. Most studios start at ② and grow toward ③.</p>
+      </header>
+
+      <!-- 01 models -->
+      <section id="models">
+        <h2>01 — The three models</h2>
+        <div class="lead">From loosest to most integrated</div>
+        <div class="models">
+
+          <div class="model">
+            <div class="model-h"><span class="badge">A</span><h3>Two studios, cross-sell</h3><span class="effort">Lightest to start · 2 brands</span></div>
+            <p class="one">A separate <b>product studio</b> and <b>design studio</b> that win clients independently, then package a joint solution when a deal needs both.</p>
+            <div class="pc">
+              <div class="pro"><h6>Strengths</h6><ul><li>Two independent lead sources</li><li>Each can own a sharp niche/audience</li><li>Low bundling risk; test what gains traction</li><li>Cross-sell upside when demand appears</li></ul></div>
+              <div class="con"><h6>Trade-offs</h6><ul><li>Double brand + marketing overhead</li><li>Split focus across two engines</li><li>Coordination friction on joint deals</li><li>Harder to build one strong reputation</li></ul></div>
+            </div>
+            <div class="bestwhen"><b>Best when:</b> you have distinct product and design talent (or a partner) and want to keep optionality before committing to one brand.</div>
+            <div class="cases"><b>Success cases:</b> <a href="https://www.pentagram.com" target="_blank" rel="noopener">Pentagram</a> (<a href="https://x.com/pentagram" target="_blank" rel="noopener">@pentagram</a>) · <a href="https://www.ustwo.com" target="_blank" rel="noopener">ustwo</a> (<a href="https://x.com/ustwo" target="_blank" rel="noopener">@ustwo</a>) · <a href="https://after.design" target="_blank" rel="noopener">after.design</a> (<a href="https://x.com/aliszu" target="_blank" rel="noopener">@aliszu</a>) — federated/specialist studios that stay narrow and team up for joint work.</div>
+          </div>
+
+          <div class="model">
+            <div class="model-h"><span class="badge">B</span><h3>Unified product + design studio</h3><span class="effort">One brand · balanced</span></div>
+            <p class="one">A single studio selling <b>product strategy and design together</b> — the default modern positioning buyers now expect.</p>
+            <div class="pc">
+              <div class="pro"><h6>Strengths</h6><ul><li>One strong brand and funnel to compound</li><li>Bundled projects = higher average value</li><li>Clearest story; matches how buyers shop</li><li>Simpler ops than a build team</li></ul></div>
+              <div class="con"><h6>Trade-offs</h6><ul><li>Must credibly staff both disciplines</li><li>“Jack of all trades” risk without a niche</li><li>You carry both crafts’ delivery load</li></ul></div>
+            </div>
+            <div class="bestwhen"><b>Best when:</b> you can deliver discovery → design end-to-end and want one clear positioning. The pragmatic starting point for most.</div>
+            <div class="cases"><b>Success cases:</b> <a href="https://www.metalab.com" target="_blank" rel="noopener">MetaLab</a> (<a href="https://x.com/metalab" target="_blank" rel="noopener">@metalab</a>) · <a href="https://clay.global" target="_blank" rel="noopener">Clay</a> · <a href="https://budarina.studio" target="_blank" rel="noopener">Budarina Studio</a> (<a href="https://x.com/marina_uiux" target="_blank" rel="noopener">@marina_uiux</a>) — one brand selling product strategy + design together.</div>
+          </div>
+
+          <div class="model">
+            <div class="model-h"><span class="badge">C</span><h3>Product + design + front-end (E2E)</h3><span class="effort">Heaviest · highest ticket</span></div>
+            <p class="one">Own the whole outcome: <b>strategy → design → shipped front-end</b>. “We don’t just design it, we ship it.”</p>
+            <div class="pc">
+              <div class="pro"><h6>Strengths</h6><ul><li>Highest project value; stickiest retainers</li><li>Owns the result — strong accountability</li><li>Defensible; matches the market trend</li><li>11 of 15 top firms (Report ②) are tri-disciplinary</li></ul></div>
+              <div class="con"><h6>Trade-offs</h6><ul><li>Must add/partner front-end engineering</li><li>Ops + utilization complexity</li><li>Slower to launch; higher fixed cost</li></ul></div>
+            </div>
+            <div class="bestwhen"><b>Best when:</b> you can add front-end capacity and want premium, end-to-end engagements that convert naturally into retainers.</div>
+            <div class="cases"><b>Success cases:</b> <a href="https://thoughtbot.com" target="_blank" rel="noopener">thoughtbot</a> (<a href="https://x.com/thoughtbot" target="_blank" rel="noopener">@thoughtbot</a>) · <a href="https://work.co" target="_blank" rel="noopener">Work &amp; Co</a> · <a href="https://kineticstudio.com" target="_blank" rel="noopener">Kinetic Studio</a> (<a href="https://x.com/hunterthompson" target="_blank" rel="noopener">@hunterthompson</a>) — strategy → design → shipped front-end under one roof.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 02 service focus -->
+      <section id="focus">
+        <h2>02 — Service focus</h2>
+        <div class="lead">Land with the immediate goal, expand into the retainer</div>
+        <div class="svc">
+          <div class="scard">
+            <div class="k">Immediate goal · the wedge</div>
+            <h4>Project &amp; sprint work</h4>
+            <p>Fast, scoped value that gets you in the door and proves the relationship. Priced per engagement.</p>
+            <div class="chips">
+              <span class="chip2">Launch strategy</span><span class="chip2">MVP build</span><span class="chip2">Feature delivery</span><span class="chip2">Workflow installment</span><span class="chip2">Training &amp; enablement</span>
+            </div>
+          </div>
+          <div class="scard">
+            <div class="k">Long-term · the LTV</div>
+            <h4>Ongoing retainer</h4>
+            <p>Convert a successful project into a continuous partnership — the profit engine and the reason to keep the funnel small but warm.</p>
+            <div class="chips">
+              <span class="chip2">Continuous delivery</span><span class="chip2">Design-system upkeep</span><span class="chip2">Embedded product partner</span><span class="chip2">Growth experiments</span><span class="chip2">Roadmap support</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:#3c4350"><b>The motion:</b> immediate-goal offers are the cheap, low-risk way for a client to try you; the retainer is where the economics work. Every model below is just a different way to run that same land-and-expand path.</p>
+      </section>
+
+      <!-- 03 funnels -->
+      <section id="funnels">
+        <h2>03 — Funnel per model</h2>
+        <div class="lead">How each model acquires and keeps clients</div>
+
+        <div class="fblock">
+          <div class="ft"><span class="badge">A</span><h3>Two studios, cross-sell</h3></div>
+          <div class="fstrip">
+            <div class="fstage"><h5>Attract</h5><p>Two lanes — product-strategy content &amp; design/build-in-public — each its own audience</p></div>
+            <div class="farrow">→</div>
+            <div class="fstage"><h5>Capture</h5><p>Each studio’s own site + lead magnet (audit / teardown)</p></div>
+            <div class="farrow">→</div>
+            <div class="fstage land"><h5>Land</h5><p>Independent project with one studio (MVP or design sprint)</p></div>
+            <div class="farrow">→</div>
+            <div class="fstage"><h5>Cross-sell</h5><p>Surface the adjacent need → propose a joint launch package</p></div>
+            <div class="farrow">→</div>
+            <div class="fstage expand"><h5>Expand</h5><p>Joint product + design retainer</p></div>
+          </div>
+          <p class="lever"><b>Lever:</b> two funnels = two top-of-funnel sources, and you only bundle when real demand surfaces — lowest positioning risk, but you’re running two marketing engines.</p>
+        </div>
+
+        <div class="fblock">
+          <div class="ft"><span class="badge">B</span><h3>Unified product + design studio</h3></div>
+          <div class="fstrip">
+            <div class="fstage"><h5>Attract</h5><p>One brand; content spans strategy + design in a single niche</p></div>
+            <div class="farrow">→</div>
+            <div class="fstage"><h5>Capture</h5><p>Single lead magnet: MVP teardown / product-design audit</p></div>
+            <div class="farrow">→</div>
+            <div class="fstage land"><h5>Land</h5><p>Discovery sprint → MVP or feature design</p></div>
+            <div class="farrow">→</div>
+            <div class="fstage expand"><h5>Expand</h5><p>Product + design retainer</p></div>
+          </div>
+          <p class="lever"><b>Lever:</b> one deep funnel compounds a single reputation, and bundling strategy + design lifts average project value vs. design-only.</p>
+        </div>
+
+        <div class="fblock">
+          <div class="ft"><span class="badge">C</span><h3>Product + design + front-end (E2E)</h3></div>
+          <div class="fstrip">
+            <div class="fstage"><h5>Attract</h5><p>Build-in-public shipping real products — visible proof you can ship</p></div>
+            <div class="farrow">→</div>
+            <div class="fstage"><h5>Capture</h5><p>Launch-strategy call / live build teardown</p></div>
+            <div class="farrow">→</div>
+            <div class="fstage land"><h5>Land</h5><p>E2E MVP build: strategy → design → front-end</p></div>
+            <div class="farrow">→</div>
+            <div class="fstage expand"><h5>Expand</h5><p>Ongoing product partner — continuous-delivery retainer</p></div>
+          </div>
+          <p class="lever"><b>Lever:</b> owning the build is the highest-ticket wedge and the stickiest retainer — but it needs front-end capacity from day one.</p>
+        </div>
+      </section>
+
+      <!-- 04 choose -->
+      <section id="choose">
+        <h2>04 — How to choose</h2>
+        <div class="lead">Match the model to your talent, then grow</div>
+        <ul class="ev">
+          <li><span class="claim">Start where your talent already is</span><span class="data">Design-strong solo → <b>B</b>. Have a front-end partner → <b>C</b>. Two distinct teams/audiences (product &amp; design) → <b>A</b>.</span></li>
+          <li><span class="claim">The market is moving to “design + build”</span><span class="data">Report ② showed 11 of 15 leading firms are tri-disciplinary. <b>C is the destination</b> even if you launch at B — design the brand so you can grow into it.</span></li>
+          <li><span class="claim">Lead with the wedge, live on the retainer</span><span class="data">Use immediate-goal projects (MVP, launch strategy, training) to land; convert the best clients into retainers for predictable revenue.</span></li>
+          <li><span class="claim">The front of the funnel is identical regardless</span><span class="data">From Report ①: daily visual proof-of-work in one sharp niche is what fills the top of all three funnels. Pick the niche before the model.</span></li>
+        </ul>
+        <div class="you" style="margin-top:18px">
+          <h3>A pragmatic path</h3>
+          <p>Launch as <b>Model B</b> (unified product + design) with a sharp niche and a land-and-expand offer ladder. Add a front-end partner for select builds, and once that demand is consistent, formalize into <b>Model C</b>. Keep <b>Model A</b> in your back pocket only if you end up with two genuinely distinct audiences worth marketing separately.</p>
+        </div>
+        <p style="margin-top:14px;font-size:12.5px;color:var(--muted)">This is structural and go-to-market guidance, not financial, legal, or tax advice.</p>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+  function showReport(n){
+    [1,2,3].forEach(i=>{
+      document.getElementById('report'+i).classList.toggle('active', n===i);
+      document.getElementById('t'+i).classList.toggle('active', n===i);
+    });
+    window.scrollTo({top:0});
+  }
+  // per-report scrollspy
+  document.querySelectorAll('[data-report]').forEach(rep=>{
+    const links=[...rep.querySelectorAll('nav.side a')];
+    const map=Object.fromEntries(links.map(a=>[a.dataset.t,a]));
+    const obs=new IntersectionObserver(es=>{
+      es.forEach(e=>{ if(e.isIntersecting){ links.forEach(l=>l.classList.remove('active')); map[e.target.id]?.classList.add('active'); } });
+    },{rootMargin:'-45% 0px -50% 0px',threshold:0});
+    rep.querySelectorAll('section').forEach(s=>obs.observe(s));
+  });
+</script>
+</body>
+</html>
