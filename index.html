@@ -132,6 +132,16 @@
   .cases{margin-top:12px;padding-top:11px;border-top:1px dashed var(--line);font-size:12.5px;color:var(--muted);line-height:1.7}
   .cases b{color:var(--ink)}
   .cases a{font-weight:600}
+  .mfunnel{margin-top:14px;padding-top:13px;border-top:1px dashed var(--line)}
+  .mfunnel-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);font-weight:700;margin-bottom:8px}
+  .paths{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  .path{background:#fff;border:1px solid #d4e0f5;border-radius:12px;padding:16px 18px}
+  .path h3{margin:0 0 3px;color:var(--accent);font-size:15px}
+  .path .route{font-size:12px;font-weight:700;color:var(--ink);margin:0 0 8px}
+  .path .route .ar{color:var(--accent)}
+  .path > p{margin:0;font-size:13px;color:#2a3f6b}
+  .path .why{margin-top:8px;font-size:12.5px;color:#3c4350}
+  .path .why b{color:var(--accent)}
 
   .svc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
   .scard{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--panel)}
@@ -170,7 +180,7 @@
     .tabbar .logo{display:none}
     .toggle{margin-left:0;width:100%}
     .toggle button{flex:1;font-size:11.5px;padding:7px 8px}
-    .pc,.svc{grid-template-columns:1fr}
+    .pc,.svc,.paths{grid-template-columns:1fr}
     .fstrip{flex-direction:column}
     .farrow{transform:rotate(90deg);padding:3px 0}
   }
@@ -434,8 +444,7 @@
       <ol>
         <li><a href="#models" data-t="models"><span class="n">01</span> The three models</a></li>
         <li><a href="#focus" data-t="focus"><span class="n">02</span> Service focus</a></li>
-        <li><a href="#funnels" data-t="funnels"><span class="n">03</span> Funnel per model</a></li>
-        <li><a href="#choose" data-t="choose"><span class="n">04</span> How to choose</a></li>
+        <li><a href="#choose" data-t="choose"><span class="n">03</span> How to choose</a></li>
       </ol>
       <div class="foot">Structural options &amp; go-to-market funnels, grounded in Reports ① and ②. Strategy guidance, not financial advice.</div>
     </nav>
@@ -460,6 +469,21 @@
               <div class="con"><h6>Trade-offs</h6><ul><li>Double brand + marketing overhead</li><li>Split focus across two engines</li><li>Coordination friction on joint deals</li><li>Harder to build one strong reputation</li></ul></div>
             </div>
             <div class="bestwhen"><b>Best when:</b> you have distinct product and design talent (or a partner) and want to keep optionality before committing to one brand.</div>
+            <div class="mfunnel">
+              <div class="mfunnel-label">Go-to-market funnel</div>
+              <div class="fstrip">
+                <div class="fstage"><h5>Attract</h5><p>Two lanes — product-strategy content &amp; design/build-in-public — each its own audience</p></div>
+                <div class="farrow">→</div>
+                <div class="fstage"><h5>Capture</h5><p>Each studio’s own site + lead magnet (audit / teardown)</p></div>
+                <div class="farrow">→</div>
+                <div class="fstage land"><h5>Land</h5><p>Independent project with one studio (MVP or design sprint)</p></div>
+                <div class="farrow">→</div>
+                <div class="fstage"><h5>Cross-sell</h5><p>Surface the adjacent need → joint launch package</p></div>
+                <div class="farrow">→</div>
+                <div class="fstage expand"><h5>Expand</h5><p>Joint product + design retainer</p></div>
+              </div>
+              <p class="lever"><b>Lever:</b> two funnels = two top-of-funnel sources, and you only bundle when real demand surfaces — lowest positioning risk, but you’re running two marketing engines.</p>
+            </div>
             <div class="cases"><b>Success cases:</b> <a href="https://www.pentagram.com" target="_blank" rel="noopener">Pentagram</a> (<a href="https://x.com/pentagram" target="_blank" rel="noopener">@pentagram</a>) · <a href="https://www.ustwo.com" target="_blank" rel="noopener">ustwo</a> (<a href="https://x.com/ustwo" target="_blank" rel="noopener">@ustwo</a>) · <a href="https://after.design" target="_blank" rel="noopener">after.design</a> (<a href="https://x.com/aliszu" target="_blank" rel="noopener">@aliszu</a>) — federated/specialist studios that stay narrow and team up for joint work.</div>
           </div>
 
@@ -471,6 +495,19 @@
               <div class="con"><h6>Trade-offs</h6><ul><li>Must credibly staff both disciplines</li><li>“Jack of all trades” risk without a niche</li><li>You carry both crafts’ delivery load</li></ul></div>
             </div>
             <div class="bestwhen"><b>Best when:</b> you can deliver discovery → design end-to-end and want one clear positioning. The pragmatic starting point for most.</div>
+            <div class="mfunnel">
+              <div class="mfunnel-label">Go-to-market funnel</div>
+              <div class="fstrip">
+                <div class="fstage"><h5>Attract</h5><p>One brand; content spans strategy + design in a single niche</p></div>
+                <div class="farrow">→</div>
+                <div class="fstage"><h5>Capture</h5><p>Single lead magnet: MVP teardown / product-design audit</p></div>
+                <div class="farrow">→</div>
+                <div class="fstage land"><h5>Land</h5><p>Discovery sprint → MVP or feature design</p></div>
+                <div class="farrow">→</div>
+                <div class="fstage expand"><h5>Expand</h5><p>Product + design retainer</p></div>
+              </div>
+              <p class="lever"><b>Lever:</b> one deep funnel compounds a single reputation, and bundling strategy + design lifts average project value vs. design-only.</p>
+            </div>
             <div class="cases"><b>Success cases:</b> <a href="https://www.metalab.com" target="_blank" rel="noopener">MetaLab</a> (<a href="https://x.com/metalab" target="_blank" rel="noopener">@metalab</a>) · <a href="https://clay.global" target="_blank" rel="noopener">Clay</a> · <a href="https://budarina.studio" target="_blank" rel="noopener">Budarina Studio</a> (<a href="https://x.com/marina_uiux" target="_blank" rel="noopener">@marina_uiux</a>) — one brand selling product strategy + design together.</div>
           </div>
 
@@ -482,6 +519,19 @@
               <div class="con"><h6>Trade-offs</h6><ul><li>Must add/partner front-end engineering</li><li>Ops + utilization complexity</li><li>Slower to launch; higher fixed cost</li></ul></div>
             </div>
             <div class="bestwhen"><b>Best when:</b> you can add front-end capacity and want premium, end-to-end engagements that convert naturally into retainers.</div>
+            <div class="mfunnel">
+              <div class="mfunnel-label">Go-to-market funnel</div>
+              <div class="fstrip">
+                <div class="fstage"><h5>Attract</h5><p>Build-in-public shipping real products — visible proof you can ship</p></div>
+                <div class="farrow">→</div>
+                <div class="fstage"><h5>Capture</h5><p>Launch-strategy call / live build teardown</p></div>
+                <div class="farrow">→</div>
+                <div class="fstage land"><h5>Land</h5><p>E2E MVP build: strategy → design → front-end</p></div>
+                <div class="farrow">→</div>
+                <div class="fstage expand"><h5>Expand</h5><p>Ongoing product partner — continuous-delivery retainer</p></div>
+              </div>
+              <p class="lever"><b>Lever:</b> owning the build is the highest-ticket wedge and the stickiest retainer — but it needs front-end capacity from day one.</p>
+            </div>
             <div class="cases"><b>Success cases:</b> <a href="https://thoughtbot.com" target="_blank" rel="noopener">thoughtbot</a> (<a href="https://x.com/thoughtbot" target="_blank" rel="noopener">@thoughtbot</a>) · <a href="https://work.co" target="_blank" rel="noopener">Work &amp; Co</a> · <a href="https://kineticstudio.com" target="_blank" rel="noopener">Kinetic Studio</a> (<a href="https://x.com/hunterthompson" target="_blank" rel="noopener">@hunterthompson</a>) — strategy → design → shipped front-end under one roof.</div>
           </div>
 
@@ -491,14 +541,22 @@
       <!-- 02 service focus -->
       <section id="focus">
         <h2>02 — Service focus</h2>
-        <div class="lead">Land with the immediate goal, expand into the retainer</div>
+        <div class="lead">Four ways to package the work</div>
         <div class="svc">
           <div class="scard">
             <div class="k">Immediate goal · the wedge</div>
             <h4>Project &amp; sprint work</h4>
             <p>Fast, scoped value that gets you in the door and proves the relationship. Priced per engagement.</p>
             <div class="chips">
-              <span class="chip2">Launch strategy</span><span class="chip2">MVP build</span><span class="chip2">Feature delivery</span><span class="chip2">Workflow installment</span><span class="chip2">Training &amp; enablement</span>
+              <span class="chip2">Launch strategy</span><span class="chip2">MVP build</span><span class="chip2">Feature delivery</span><span class="chip2">Discovery sprint</span>
+            </div>
+          </div>
+          <div class="scard">
+            <div class="k">Embedded · B2B</div>
+            <h4>Workflow optimization &amp; training</h4>
+            <p>Audit and re-engineer how a client’s team designs and ships, then upskill them to run it. High-trust and often recurring.</p>
+            <div class="chips">
+              <span class="chip2">Process / design-ops audit</span><span class="chip2">Tooling rollout</span><span class="chip2">Workflow installment</span><span class="chip2">Team workshops</span><span class="chip2">Ongoing enablement</span>
             </div>
           </div>
           <div class="scard">
@@ -506,66 +564,24 @@
             <h4>Ongoing retainer</h4>
             <p>Convert a successful project into a continuous partnership — the profit engine and the reason to keep the funnel small but warm.</p>
             <div class="chips">
-              <span class="chip2">Continuous delivery</span><span class="chip2">Design-system upkeep</span><span class="chip2">Embedded product partner</span><span class="chip2">Growth experiments</span><span class="chip2">Roadmap support</span>
+              <span class="chip2">Continuous delivery</span><span class="chip2">Design-system upkeep</span><span class="chip2">Embedded product partner</span><span class="chip2">Growth experiments</span>
+            </div>
+          </div>
+          <div class="scard">
+            <div class="k">Productized · scalable</div>
+            <h4>Self-serve product</h4>
+            <p>Package your expertise into things people buy without you — compounding, audience-driven income that runs alongside client work.</p>
+            <div class="chips">
+              <span class="chip2">Courses &amp; education</span><span class="chip2">Templates / UI kits</span><span class="chip2">AI skills &amp; prompts</span><span class="chip2">Cohorts &amp; community</span>
             </div>
           </div>
         </div>
-        <p style="font-size:13px;color:#3c4350"><b>The motion:</b> immediate-goal offers are the cheap, low-risk way for a client to try you; the retainer is where the economics work. Every model below is just a different way to run that same land-and-expand path.</p>
+        <p style="font-size:13px;color:#3c4350"><b>The motion:</b> immediate-goal projects are the low-risk way in; embedded B2B work and retainers are the LTV; the self-serve product compounds off the same audience. Each model above runs this ladder through its own funnel.</p>
       </section>
 
-      <!-- 03 funnels -->
-      <section id="funnels">
-        <h2>03 — Funnel per model</h2>
-        <div class="lead">How each model acquires and keeps clients</div>
-
-        <div class="fblock">
-          <div class="ft"><span class="badge">A</span><h3>Two studios, cross-sell</h3></div>
-          <div class="fstrip">
-            <div class="fstage"><h5>Attract</h5><p>Two lanes — product-strategy content &amp; design/build-in-public — each its own audience</p></div>
-            <div class="farrow">→</div>
-            <div class="fstage"><h5>Capture</h5><p>Each studio’s own site + lead magnet (audit / teardown)</p></div>
-            <div class="farrow">→</div>
-            <div class="fstage land"><h5>Land</h5><p>Independent project with one studio (MVP or design sprint)</p></div>
-            <div class="farrow">→</div>
-            <div class="fstage"><h5>Cross-sell</h5><p>Surface the adjacent need → propose a joint launch package</p></div>
-            <div class="farrow">→</div>
-            <div class="fstage expand"><h5>Expand</h5><p>Joint product + design retainer</p></div>
-          </div>
-          <p class="lever"><b>Lever:</b> two funnels = two top-of-funnel sources, and you only bundle when real demand surfaces — lowest positioning risk, but you’re running two marketing engines.</p>
-        </div>
-
-        <div class="fblock">
-          <div class="ft"><span class="badge">B</span><h3>Unified product + design studio</h3></div>
-          <div class="fstrip">
-            <div class="fstage"><h5>Attract</h5><p>One brand; content spans strategy + design in a single niche</p></div>
-            <div class="farrow">→</div>
-            <div class="fstage"><h5>Capture</h5><p>Single lead magnet: MVP teardown / product-design audit</p></div>
-            <div class="farrow">→</div>
-            <div class="fstage land"><h5>Land</h5><p>Discovery sprint → MVP or feature design</p></div>
-            <div class="farrow">→</div>
-            <div class="fstage expand"><h5>Expand</h5><p>Product + design retainer</p></div>
-          </div>
-          <p class="lever"><b>Lever:</b> one deep funnel compounds a single reputation, and bundling strategy + design lifts average project value vs. design-only.</p>
-        </div>
-
-        <div class="fblock">
-          <div class="ft"><span class="badge">C</span><h3>Product + design + front-end (E2E)</h3></div>
-          <div class="fstrip">
-            <div class="fstage"><h5>Attract</h5><p>Build-in-public shipping real products — visible proof you can ship</p></div>
-            <div class="farrow">→</div>
-            <div class="fstage"><h5>Capture</h5><p>Launch-strategy call / live build teardown</p></div>
-            <div class="farrow">→</div>
-            <div class="fstage land"><h5>Land</h5><p>E2E MVP build: strategy → design → front-end</p></div>
-            <div class="farrow">→</div>
-            <div class="fstage expand"><h5>Expand</h5><p>Ongoing product partner — continuous-delivery retainer</p></div>
-          </div>
-          <p class="lever"><b>Lever:</b> owning the build is the highest-ticket wedge and the stickiest retainer — but it needs front-end capacity from day one.</p>
-        </div>
-      </section>
-
-      <!-- 04 choose -->
+      <!-- 03 choose -->
       <section id="choose">
-        <h2>04 — How to choose</h2>
+        <h2>03 — How to choose</h2>
         <div class="lead">Match the model to your talent, then grow</div>
         <ul class="ev">
           <li><span class="claim">Start where your talent already is</span><span class="data">Design-strong solo → <b>B</b>. Have a front-end partner → <b>C</b>. Two distinct teams/audiences (product &amp; design) → <b>A</b>.</span></li>
@@ -574,8 +590,22 @@
           <li><span class="claim">The front of the funnel is identical regardless</span><span class="data">From Report ①: daily visual proof-of-work in one sharp niche is what fills the top of all three funnels. Pick the niche before the model.</span></li>
         </ul>
         <div class="you" style="margin-top:18px">
-          <h3>A pragmatic path</h3>
-          <p>Launch as <b>Model B</b> (unified product + design) with a sharp niche and a land-and-expand offer ladder. Add a front-end partner for select builds, and once that demand is consistent, formalize into <b>Model C</b>. Keep <b>Model A</b> in your back pocket only if you end up with two genuinely distinct audiences worth marketing separately.</p>
+          <h3>Two pragmatic paths</h3>
+          <p style="margin-bottom:2px">Two sensible sequences — pick based on how much certainty you have up front.</p>
+          <div class="paths">
+            <div class="path">
+              <h3>Path A — Commit early, then deepen</h3>
+              <div class="route">Model B <span class="ar">→</span> Model C</div>
+              <p>Launch as a unified product + design studio with a sharp niche and a land-and-expand offer ladder. Add a front-end partner for select builds; once that demand is steady, formalize into full E2E.</p>
+              <div class="why"><b>Why:</b> one brand compounds a single reputation fastest and matches how buyers now shop — product + design together — so you skip the overhead of two marketing engines. Best when you can already deliver discovery → design and want momentum now.</div>
+            </div>
+            <div class="path">
+              <h3>Path B — Validate separately, then converge</h3>
+              <div class="route">Model A <span class="ar">→</span> Model B</div>
+              <p>Start as two specialist studios that win clients independently and cross-sell joint work. As the market shows which pairing and niche actually pull, merge the winners into one unified brand.</p>
+              <div class="why"><b>Why:</b> testing product and design demand separately lowers positioning risk, and the cross-sell signals tell you exactly what to bundle — so you commit to one brand on evidence, not a guess. Best when you’re unsure which discipline leads, or have two distinct audiences/talent.</div>
+            </div>
+          </div>
         </div>
         <p style="margin-top:14px;font-size:12.5px;color:var(--muted)">This is structural and go-to-market guidance, not financial, legal, or tax advice.</p>
       </section>
